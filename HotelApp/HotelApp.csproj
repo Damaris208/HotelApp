@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdministrareHotel.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Program.cs" />

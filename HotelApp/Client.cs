@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HotelApp
+﻿namespace HotelApp
 {
     public class Client
     {
-        public string Nume;
-        public string Prenume;
-        public string Telefon;
-        public string Email;
+        public string Nume { get; set; }
+        public string Prenume { get; set; }
+        public string Telefon { get; set; }
+        public string Email { get; set; }
 
         public Client()
         {
@@ -28,6 +22,7 @@ namespace HotelApp
             Telefon = telefon;
             Email = email;
         }
+
         public string Info()
         {
             if (Nume == string.Empty || Prenume == string.Empty)
