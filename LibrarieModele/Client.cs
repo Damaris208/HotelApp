@@ -1,4 +1,4 @@
-﻿namespace HotelApp
+﻿namespace NivelModele
 {
     public class Client
     {

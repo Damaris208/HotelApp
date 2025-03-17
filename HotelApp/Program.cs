@@ -1,4 +1,6 @@
 ﻿using System;
+using NivelModele;
+using NivelStocareDate;
 
 namespace HotelApp
 {
@@ -6,32 +8,38 @@ namespace HotelApp
     {
         static void Main()
         {
-            AdministrareHotel adminHotel = new AdministrareHotel();
-
+            AdministrareClienti adminClienti = new AdministrareClienti();
+            AdministrareCamere adminCamere = new AdministrareCamere();
+            Client clientNou = new Client();
             string optiune;
+
+            Console.WriteLine("\nMeniu:");
+            Console.WriteLine("0. Citire client de la tastatura");
+            Console.WriteLine("1. Salvare client in vectorul de obiecte");
+            Console.WriteLine("2. Afisare clienti");
+            Console.WriteLine("3. Cautare client dupa nume si prenume");
+            Console.WriteLine("4. Adaugare camera");
+            Console.WriteLine("5. Afisare camere");
+            Console.WriteLine("6. Cautare camera dupa numar");
+            Console.WriteLine("X. Iesire");
+
             do
             {
-                Console.WriteLine("\nMeniu:");
-                Console.WriteLine("1. Adaugare client");
-                Console.WriteLine("2. Afisare clienti");
-                Console.WriteLine("3. Cautare client dupa nume");
-                Console.WriteLine("4. Adaugare camera");
-                Console.WriteLine("5. Afisare camere");
-                Console.WriteLine("6. Cautare camera dupa numar");
-                Console.WriteLine("X. Iesire");
-
-                Console.Write("Alegeti o optiune: ");
+                Console.Write("\nAlegeti o optiune: ");
                 optiune = Console.ReadLine().ToUpper();
 
                 switch (optiune)
                 {
+                    case "0":
+                        clientNou = CitireClientTastatura();
+                        break;
+
                     case "1":
-                        Client client = CitireClient();
-                        adminHotel.AdaugaClient(client);
+                        adminClienti.AdaugaClient(clientNou);
                         break;
 
                     case "2":
-                        adminHotel.AfisareClienti();
+                        adminClienti.AfisareClienti();
                         break;
 
                     case "3":
@@ -39,23 +47,23 @@ namespace HotelApp
                         string nume = Console.ReadLine();
                         Console.Write("Introduceti prenumele clientului: ");
                         string prenume = Console.ReadLine();
-                        Client clientGasit = adminHotel.CautaClient(nume, prenume);
+                        Client clientGasit = adminClienti.CautaClient(nume, prenume);
                         Console.WriteLine(clientGasit != null ? clientGasit.Info() : "Clientul nu a fost gasit.");
                         break;
 
                     case "4":
                         Camera camera = CitireCamera();
-                        adminHotel.AdaugaCamera(camera);
+                        adminCamere.AdaugaCamera(camera);
                         break;
 
                     case "5":
-                        adminHotel.AfisareCamere();
+                        adminCamere.AfisareCamere();
                         break;
 
                     case "6":
                         Console.Write("Introduceti numarul camerei: ");
                         int numar = int.Parse(Console.ReadLine());
-                        Camera cameraGasita = adminHotel.CautaCamera(numar);
+                        Camera cameraGasita = adminCamere.CautaCamera(numar);
                         Console.WriteLine(cameraGasita != null ? cameraGasita.Info() : "Camera nu a fost gasita.");
                         break;
 
@@ -70,7 +78,7 @@ namespace HotelApp
             } while (optiune != "X");
         }
 
-        static Client CitireClient()
+        static Client CitireClientTastatura()
         {
             Console.Write("Nume: ");
             string nume = Console.ReadLine();
