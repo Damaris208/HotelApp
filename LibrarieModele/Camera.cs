@@ -6,8 +6,6 @@
         public TipCamera Tip { get; set; }
         public bool EsteOcupata { get; set; }
         public OptiuniCamera Optiuni { get; set; }
-        public int V { get; }
-        public TipCamera TipCamera { get; }
 
         public Camera()
         {
@@ -25,16 +23,11 @@
             Optiuni = optiuni;
         }
 
-        public Camera(int v, TipCamera tipCamera)
-        {
-            V = v;
-            TipCamera = tipCamera;
-        }
-
         public void OcupaCamera()
         {
             EsteOcupata = true;
         }
+
         public bool AreOptiune(OptiuniCamera optiune)
         {
             return (Optiuni & optiune) == optiune;

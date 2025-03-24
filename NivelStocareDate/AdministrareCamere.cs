@@ -37,18 +37,13 @@ namespace NivelStocareDate
             }
         }
 
-        public Camera CautaCamera(int numar)
-        {
-            return camere.Find(c => c.Numar == numar);
-        }
-
         private void SalveazaCamereInFisier()
         {
             using (StreamWriter writer = new StreamWriter(caleFisier))
             {
                 foreach (var camera in camere)
                 {
-                    writer.WriteLine($"{camera.Numar},{camera.Tip},{camera.EsteOcupata},{camera.Optiuni}");
+                    writer.WriteLine($"{camera.Numar},{camera.Tip},{camera.EsteOcupata},{(int)camera.Optiuni}");
                 }
             }
         }
@@ -72,10 +67,13 @@ namespace NivelStocareDate
 
                     try
                     {
-                        Camera camera = new Camera(int.Parse(date[0]), (TipCamera)Enum.Parse(typeof(TipCamera), date[1]))
+                        Camera camera = new Camera(
+                            int.Parse(date[0]),
+                            (TipCamera)Enum.Parse(typeof(TipCamera), date[1]),
+                            (OptiuniCamera)int.Parse(date[3])
+                        )
                         {
-                            EsteOcupata = bool.Parse(date[2]),
-                            Optiuni = (OptiuniCamera)Enum.Parse(typeof(OptiuniCamera), date[3])
+                            EsteOcupata = bool.Parse(date[2])
                         };
 
                         camere.Add(camera);
@@ -87,6 +85,5 @@ namespace NivelStocareDate
                 }
             }
         }
-
     }
 }
