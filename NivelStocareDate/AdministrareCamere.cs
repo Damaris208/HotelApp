@@ -26,7 +26,7 @@ namespace NivelStocareDate
         {
             if (camere.Count == 0)
             {
-                Console.WriteLine("Nu există camere înregistrate.");
+                Console.WriteLine("Nu exista camere inregistrate.");
                 return;
             }
 
@@ -48,7 +48,7 @@ namespace NivelStocareDate
             {
                 foreach (var camera in camere)
                 {
-                    writer.WriteLine($"{camera.Numar},{camera.Tip},{camera.EsteOcupata}");
+                    writer.WriteLine($"{camera.Numar},{camera.Tip},{camera.EsteOcupata},{camera.Optiuni}");
                 }
             }
         }
@@ -63,13 +63,30 @@ namespace NivelStocareDate
                 while ((linie = reader.ReadLine()) != null)
                 {
                     var date = linie.Split(',');
-                    Camera camera = new Camera(int.Parse(date[0]), date[1])
+
+                    if (date.Length < 4)
                     {
-                        EsteOcupata = bool.Parse(date[2])
-                    };
-                    camere.Add(camera);
+                        Console.WriteLine($"Linie invalidă: {linie}");
+                        continue;
+                    }
+
+                    try
+                    {
+                        Camera camera = new Camera(int.Parse(date[0]), (TipCamera)Enum.Parse(typeof(TipCamera), date[1]))
+                        {
+                            EsteOcupata = bool.Parse(date[2]),
+                            Optiuni = (OptiuniCamera)Enum.Parse(typeof(OptiuniCamera), date[3])
+                        };
+
+                        camere.Add(camera);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Eroare la procesarea liniei: {linie}. Detalii: {ex.Message}");
+                    }
                 }
             }
         }
+
     }
 }

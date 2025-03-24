@@ -18,9 +18,7 @@ namespace HotelApp
             Console.WriteLine("1. Salvare client in vectorul de obiecte");
             Console.WriteLine("2. Afisare clienti");
             Console.WriteLine("3. Cautare client dupa nume si prenume");
-            Console.WriteLine("4. Adaugare camera");
-            Console.WriteLine("5. Afisare camere");
-            Console.WriteLine("6. Cautare camera dupa numar");
+            Console.WriteLine("4. Afisare camere");
             Console.WriteLine("X. Iesire");
 
             do
@@ -52,19 +50,7 @@ namespace HotelApp
                         break;
 
                     case "4":
-                        Camera camera = CitireCamera();
-                        adminCamere.AdaugaCamera(camera);
-                        break;
-
-                    case "5":
                         adminCamere.AfisareCamere();
-                        break;
-
-                    case "6":
-                        Console.Write("Introduceti numarul camerei: ");
-                        int numar = int.Parse(Console.ReadLine());
-                        Camera cameraGasita = adminCamere.CautaCamera(numar);
-                        Console.WriteLine(cameraGasita != null ? cameraGasita.Info() : "Camera nu a fost gasita.");
                         break;
 
                     case "X":
@@ -90,16 +76,6 @@ namespace HotelApp
             string email = Console.ReadLine();
 
             return new Client(nume, prenume, telefon, email);
-        }
-
-        static Camera CitireCamera()
-        {
-            Console.Write("Numar camera: ");
-            int numar = int.Parse(Console.ReadLine());
-            Console.Write("Tip (Single/Dubla/Tripla/Quad): ");
-            string tip = Console.ReadLine();
-
-            return new Camera(numar, tip);
         }
     }
 }

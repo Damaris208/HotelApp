@@ -1,20 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using NivelModele;
 
 namespace NivelStocareDate
 {
-    public class AdministrareClienti 
+    public class AdministrareClienti
     {
-        private List<Client> clienti = new List<Client>();
+        private string caleFisierClienti = "clienti.txt";
+        private List<Client> clienti;
+
+        public AdministrareClienti()
+        {
+            clienti = new List<Client>();
+            IncarcaClientiDinFisier();
+        }
 
         public void AdaugaClient(Client client)
         {
             clienti.Add(client);
+            SalveazaClientiInFisier();
         }
 
         public void AfisareClienti()
         {
+            if (clienti.Count == 0)
+            {
+                Console.WriteLine("Nu exista clienti inregistrati.");
+                return;
+            }
+
+            Console.WriteLine("\nLista clientilor:");
             foreach (var client in clienti)
             {
                 Console.WriteLine(client.Info());
@@ -23,7 +39,34 @@ namespace NivelStocareDate
 
         public Client CautaClient(string nume, string prenume)
         {
-            return clienti.Find(c => c.Nume == nume && c.Prenume == prenume);
+            return clienti.Find(c => c.Nume.Equals(nume, StringComparison.OrdinalIgnoreCase) && c.Prenume.Equals(prenume, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private void SalveazaClientiInFisier()
+        {
+            using (StreamWriter writer = new StreamWriter(caleFisierClienti))
+            {
+                foreach (var client in clienti)
+                {
+                    writer.WriteLine($"{client.Nume},{client.Prenume},{client.Telefon},{client.Email}");
+                }
+            }
+        }
+
+        private void IncarcaClientiDinFisier()
+        {
+            if (!File.Exists(caleFisierClienti)) return;
+
+            using (StreamReader reader = new StreamReader(caleFisierClienti))
+            {
+                string linie;
+                while ((linie = reader.ReadLine()) != null)
+                {
+                    var date = linie.Split(',');
+                    Client client = new Client(date[0], date[1], date[2], date[3]);
+                    clienti.Add(client);
+                }
+            }
         }
     }
 }

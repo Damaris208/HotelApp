@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Camera.cs" />
+    <Compile Include="Enum.cs" />
     <Compile Include="Rezervare.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
