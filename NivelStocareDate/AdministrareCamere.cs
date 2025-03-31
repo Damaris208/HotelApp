@@ -1,7 +1,8 @@
-﻿using System;
+﻿using NivelModele;
 using System.Collections.Generic;
 using System.IO;
-using NivelModele;
+using System;
+using System.Linq;
 
 namespace NivelStocareDate
 {
@@ -19,7 +20,12 @@ namespace NivelStocareDate
         public void AdaugaCamera(Camera camera)
         {
             camere.Add(camera);
-            SalveazaCamereInFisier();
+            SalveazaCameraInFisier(camera);
+        }
+
+        public Camera CautaCameraDupaNumar(int numar)
+        {
+            return camere.FirstOrDefault(c => c.Numar == numar);
         }
 
         public void AfisareCamere()
@@ -37,14 +43,11 @@ namespace NivelStocareDate
             }
         }
 
-        private void SalveazaCamereInFisier()
+        public void SalveazaCameraInFisier(Camera camera)
         {
-            using (StreamWriter writer = new StreamWriter(caleFisier))
+            using (StreamWriter writer = new StreamWriter(caleFisier, append: true))
             {
-                foreach (var camera in camere)
-                {
-                    writer.WriteLine($"{camera.Numar},{camera.Tip},{camera.EsteOcupata},{(int)camera.Optiuni}");
-                }
+                writer.WriteLine($"{camera.Numar},{camera.Tip},{camera.EsteOcupata},{(int)camera.Optiuni}");
             }
         }
 
@@ -59,23 +62,32 @@ namespace NivelStocareDate
                 {
                     var date = linie.Split(',');
 
-                    if (date.Length < 4)
+                    if (date.Length < 3)
                     {
-                        Console.WriteLine($"Linie invalidă: {linie}");
+                        Console.WriteLine($"Linie invalida: {linie}");
                         continue;
                     }
 
                     try
                     {
-                        Camera camera = new Camera(
-                            int.Parse(date[0]),
-                            (TipCamera)Enum.Parse(typeof(TipCamera), date[1]),
-                            (OptiuniCamera)int.Parse(date[3])
-                        )
-                        {
-                            EsteOcupata = bool.Parse(date[2])
-                        };
+                        int numar = int.Parse(date[0]);
+                        TipCamera tip = (TipCamera)Enum.Parse(typeof(TipCamera), date[1]);
+                        bool esteOcupata = bool.Parse(date[2]);
 
+                        OptiuniCamera optiuni = OptiuniCamera.Niciuna;
+                        for (int i = 3; i < date.Length; i++)
+                        {
+                            if (Enum.TryParse(date[i], out OptiuniCamera optiune))
+                            {
+                                optiuni |= optiune;
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Avertisment: Optiunea '{date[i]}' nu este valida.");
+                            }
+                        }
+
+                        Camera camera = new Camera(numar, tip, optiuni) { EsteOcupata = esteOcupata };
                         camere.Add(camera);
                     }
                     catch (Exception ex)

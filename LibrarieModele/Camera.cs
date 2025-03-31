@@ -35,8 +35,8 @@
 
         public string Info()
         {
-            string stare = EsteOcupata ? "Ocupată" : "Liberă";
-            return $"Camera {Numar}, Tip: {Tip}, Opțiuni: {Optiuni}, Stare: {stare}";
+            string stare = EsteOcupata ? "Ocupata" : "Libera";
+            return $"Camera {Numar}, Tip: {Tip}, Optiuni: {Optiuni}, Stare: {stare}";
         }
     }
 }
