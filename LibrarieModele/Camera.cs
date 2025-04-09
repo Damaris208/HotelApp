@@ -23,6 +23,14 @@
             Optiuni = optiuni;
         }
 
+        public Camera(int numar, TipCamera tip, OptiuniCamera optiuni, bool esteOcupata)
+        {
+            Numar = numar;
+            Tip = tip;
+            Optiuni = optiuni;
+            EsteOcupata = esteOcupata;
+        }
+
         public void OcupaCamera()
         {
             EsteOcupata = true;

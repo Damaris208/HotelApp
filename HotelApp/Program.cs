@@ -8,8 +8,9 @@ namespace HotelApp
     {
         static void Main()
         {
+            string caleFisier = "camere.txt";  // Define the path to the file
             AdministrareClienti adminClienti = new AdministrareClienti();
-            AdministrareCamere adminCamere = new AdministrareCamere();
+            AdministrareCamere adminCamere = new AdministrareCamere(caleFisier); // Pass the file path here
             Client clientNou = new Client();
             string optiune;
 

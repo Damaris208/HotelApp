@@ -1,8 +1,7 @@
-﻿using NivelModele;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System;
-using System.Linq;
+using NivelModele;
 
 namespace NivelStocareDate
 {
@@ -11,8 +10,9 @@ namespace NivelStocareDate
         private string caleFisier = "camere.txt";
         private List<Camera> camere;
 
-        public AdministrareCamere()
+        public AdministrareCamere(string caleFisier)
         {
+            this.caleFisier = caleFisier;
             camere = new List<Camera>();
             IncarcaCamereDinFisier();
         }
@@ -25,25 +25,22 @@ namespace NivelStocareDate
 
         public Camera CautaCameraDupaNumar(int numar)
         {
-            return camere.FirstOrDefault(c => c.Numar == numar);
+            return camere.Find(c => c.Numar == numar);
         }
 
-        public void AfisareCamere()
+        public List<Camera> AfisareCamere()
         {
             if (camere.Count == 0)
             {
                 Console.WriteLine("Nu exista camere inregistrate.");
-                return;
+                return new List<Camera>();  // Return an empty list if no rooms are available
             }
 
-            Console.WriteLine("\nLista camerelor:");
-            foreach (var camera in camere)
-            {
-                Console.WriteLine(camera.Info());
-            }
+            return camere;  // Return the list of rooms
         }
 
-        public void SalveazaCameraInFisier(Camera camera)
+
+        private void SalveazaCameraInFisier(Camera camera)
         {
             using (StreamWriter writer = new StreamWriter(caleFisier, append: true))
             {
@@ -62,11 +59,7 @@ namespace NivelStocareDate
                 {
                     var date = linie.Split(',');
 
-                    if (date.Length < 3)
-                    {
-                        Console.WriteLine($"Linie invalida: {linie}");
-                        continue;
-                    }
+                    if (date.Length < 3) continue;
 
                     try
                     {
@@ -75,20 +68,15 @@ namespace NivelStocareDate
                         bool esteOcupata = bool.Parse(date[2]);
 
                         OptiuniCamera optiuni = OptiuniCamera.Niciuna;
-                        for (int i = 3; i < date.Length; i++)
+                        if (date.Length > 3)
                         {
-                            if (Enum.TryParse(date[i], out OptiuniCamera optiune))
-                            {
-                                optiuni |= optiune;
-                            }
-                            else
-                            {
-                                Console.WriteLine($"Avertisment: Optiunea '{date[i]}' nu este valida.");
-                            }
+                            int optiuniInt = int.Parse(date[3]);
+                            optiuni = (OptiuniCamera)optiuniInt;
                         }
 
                         Camera camera = new Camera(numar, tip, optiuni) { EsteOcupata = esteOcupata };
-                        camere.Add(camera);
+                        camere.Add(camera);  // Adăugăm camera în lista de camere
+                        Console.WriteLine($"Camera adăugată: {camera.Info()}");  // Mesaj de debug
                     }
                     catch (Exception ex)
                     {
@@ -97,5 +85,6 @@ namespace NivelStocareDate
                 }
             }
         }
+
     }
 }
