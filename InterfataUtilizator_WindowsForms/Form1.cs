@@ -32,7 +32,7 @@ namespace InterfataUtilizator_WindowsForms
         private void ConfigureazaFormular()
         {
             this.Text = "Detalii Camere Hotel + Clienti";
-            this.Size = new Size(900, 650);
+            this.Size = new Size(900, 700);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.WhiteSmoke;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -43,16 +43,14 @@ namespace InterfataUtilizator_WindowsForms
             var panelPrincipal = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
-                RowCount = 4,
+                RowCount = 3,
                 ColumnCount = 1,
-                BackColor = Color.White,
-                AutoSize = true
+                BackColor = Color.White
             };
 
-            panelPrincipal.RowStyles.Add(new RowStyle(SizeType.Absolute, 60));   // Antet
-            panelPrincipal.RowStyles.Add(new RowStyle(SizeType.Absolute, 250));  // Tabel
-            panelPrincipal.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));   // Statistici
-            panelPrincipal.RowStyles.Add(new RowStyle(SizeType.Percent, 100));  // Formular
+            panelPrincipal.RowStyles.Add(new RowStyle(SizeType.Absolute, 60));  // Antet
+            panelPrincipal.RowStyles.Add(new RowStyle(SizeType.Percent, 100)); // Conținut (form + tabel)
+            panelPrincipal.RowStyles.Add(new RowStyle(SizeType.Absolute, 40)); // Statistici
 
             this.Controls.Add(panelPrincipal);
 
@@ -75,73 +73,32 @@ namespace InterfataUtilizator_WindowsForms
             panelAntet.Controls.Add(lblTitlu);
             panelPrincipal.Controls.Add(panelAntet);
 
-            var panelTabel = new Panel
+            // Zona mijloc: 2 coloane - formular + tabel
+            var zonaMijloc = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
-                Padding = new Padding(20),
-                BackColor = Color.White
+                ColumnCount = 2,
+                RowCount = 1
             };
+            zonaMijloc.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
+            zonaMijloc.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
 
-            dgvCamere = new DataGridView
-            {
-                BackgroundColor = Color.White,
-                BorderStyle = BorderStyle.Fixed3D,
-                Width = 840,
-                Height = 200,
-                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None,
-                AllowUserToAddRows = false,
-                ReadOnly = true,
-                RowHeadersVisible = false,
-                ScrollBars = ScrollBars.Vertical,
-                Font = new Font("Segoe UI", 10),
-                ColumnHeadersHeight = 30,
-                RowTemplate = { Height = 26 },
-                Location = new Point(20, 20)
-            };
+            panelPrincipal.Controls.Add(zonaMijloc);
 
-            dgvCamere.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-            panelTabel.Controls.Add(dgvCamere);
-            panelPrincipal.Controls.Add(panelTabel);
-
-            dgvCamere.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-            panelTabel.Controls.Add(dgvCamere);
-            panelPrincipal.Controls.Add(panelTabel);
-
-            // Statistici
-            var panelStatistici = new Panel
-            {
-                BackColor = Color.LightSteelBlue,
-                Dock = DockStyle.Fill,
-                Height = 40
-            };
-
-            lblStatistici = new Label
-            {
-                Text = "Statistici camere...",
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                ForeColor = Color.DarkSlateGray,
-                Dock = DockStyle.Fill,
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-
-            panelStatistici.Controls.Add(lblStatistici);
-            panelPrincipal.Controls.Add(panelStatistici);
-            // Formular client
+            // Formular în partea stângă
             var panelFormular = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
-                Padding = new Padding(40, 10, 40, 20),
-                BackColor = Color.White,
+                Padding = new Padding(40, 10, 20, 20),
                 ColumnCount = 2,
-                RowCount = 6,
+                RowCount = 9,
                 AutoSize = true
             };
 
-            panelFormular.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30));
-            panelFormular.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70));
-
-            for (int i = 0; i < 6; i++)
-                panelFormular.RowStyles.Add(new RowStyle(SizeType.Absolute, i == 4 ? 45 : (i == 5 ? 30 : 35)));
+            panelFormular.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35));
+            panelFormular.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65));
+            for (int i = 0; i < 9; i++)
+                panelFormular.RowStyles.Add(new RowStyle(SizeType.Absolute, i == 4 ? 45 : 35));
 
             lblNume = new Label { Text = "Nume:", Anchor = AnchorStyles.Left, AutoSize = true };
             txtNume = new TextBox { Width = 250 };
@@ -171,6 +128,51 @@ namespace InterfataUtilizator_WindowsForms
                 Anchor = AnchorStyles.Left
             };
 
+            Label lblCauta = new Label { Text = "Caută client (Nume Prenume):", Anchor = AnchorStyles.Left, AutoSize = true };
+            TextBox txtCauta = new TextBox { Width = 250 };
+            Button btnCauta = new Button
+            {
+                Text = "Caută",
+                Width = 100,
+                Height = 30,
+                BackColor = Color.MediumSeaGreen,
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                Anchor = AnchorStyles.Left
+            };
+            Label lblRezultatCautare = new Label
+            {
+                AutoSize = true,
+                ForeColor = Color.DarkBlue,
+                Anchor = AnchorStyles.Left
+            };
+
+            btnCauta.Click += (s, e) =>
+            {
+                string[] numePrenume = txtCauta.Text.Trim().Split(' ');
+                if (numePrenume.Length != 2)
+                {
+                    lblRezultatCautare.Text = "Introduceți nume și prenume separate prin spațiu.";
+                    lblRezultatCautare.ForeColor = Color.Red;
+                    return;
+                }
+
+                var adminClienti = new AdministrareClienti();
+                var clientGasit = adminClienti.CautaClient(numePrenume[0], numePrenume[1]);
+
+                if (clientGasit != null)
+                {
+                    lblRezultatCautare.Text = $"Client găsit: {clientGasit.Nume} {clientGasit.Prenume}, {clientGasit.Telefon}, {clientGasit.Email}";
+                    lblRezultatCautare.ForeColor = Color.Green;
+                }
+                else
+                {
+                    lblRezultatCautare.Text = "Clientul nu a fost găsit.";
+                    lblRezultatCautare.ForeColor = Color.Red;
+                }
+            };
+
+            // Adaugare controale în formular
             panelFormular.Controls.Add(lblNume, 0, 0);
             panelFormular.Controls.Add(txtNume, 1, 0);
             panelFormular.Controls.Add(lblPrenume, 0, 1);
@@ -181,9 +183,61 @@ namespace InterfataUtilizator_WindowsForms
             panelFormular.Controls.Add(txtEmail, 1, 3);
             panelFormular.Controls.Add(btnAdauga, 1, 4);
             panelFormular.Controls.Add(lblMesajEroare, 1, 5);
+            panelFormular.Controls.Add(lblCauta, 0, 6);
+            panelFormular.Controls.Add(txtCauta, 1, 6);
+            panelFormular.Controls.Add(btnCauta, 1, 7);
+            panelFormular.Controls.Add(lblRezultatCautare, 1, 8);
 
-            panelPrincipal.Controls.Add(panelFormular);
+            zonaMijloc.Controls.Add(panelFormular, 0, 0);
+
+            // Tabel camere în partea dreaptă
+            var panelTabel = new Panel
+            {
+                Dock = DockStyle.Fill,
+                Padding = new Padding(20),
+                BackColor = Color.White
+            };
+
+            dgvCamere = new DataGridView
+            {
+                BackgroundColor = Color.White,
+                BorderStyle = BorderStyle.Fixed3D,
+                Dock = DockStyle.Fill,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None,
+                AllowUserToAddRows = false,
+                ReadOnly = true,
+                RowHeadersVisible = false,
+                ScrollBars = ScrollBars.Vertical,
+                Font = new Font("Segoe UI", 10),
+                ColumnHeadersHeight = 30,
+                RowTemplate = { Height = 26 }
+            };
+
+            dgvCamere.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            panelTabel.Controls.Add(dgvCamere);
+            zonaMijloc.Controls.Add(panelTabel, 1, 0);
+
+            // Statistici
+            var panelStatistici = new Panel
+            {
+                BackColor = Color.LightSteelBlue,
+                Dock = DockStyle.Fill,
+                Height = 40
+            };
+
+            lblStatistici = new Label
+            {
+                Text = "Statistici camere...",
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                ForeColor = Color.DarkSlateGray,
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+
+            panelStatistici.Controls.Add(lblStatistici);
+            panelPrincipal.Controls.Add(panelStatistici);
         }
+
 
         private void BtnAdaugaClient_Click(object sender, EventArgs e)
         {
@@ -281,7 +335,6 @@ namespace InterfataUtilizator_WindowsForms
                 dgvCamere.Columns["EsteOcupata"].DefaultCellStyle.ForeColor = Color.Red;
                 dgvCamere.Columns["EsteOcupata"].DefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
 
-                // Statistici
                 int total = camere.Count;
                 int ocupate = camere.Count(c => c.EsteOcupata);
                 int libere = total - ocupate;
