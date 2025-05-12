@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using NivelModele;
 
 namespace NivelStocareDate
@@ -41,7 +42,14 @@ namespace NivelStocareDate
         {
             return clienti.Find(c => c.Nume.Equals(nume, StringComparison.OrdinalIgnoreCase) && c.Prenume.Equals(prenume, StringComparison.OrdinalIgnoreCase));
         }
-
+        public Client CautaClientDupaTelefon(string telefon)
+        {
+            return clienti.FirstOrDefault(c => c.Telefon == telefon);
+        }
+        public Client CautaClientDupaEmail(string email)
+        {
+            return clienti.FirstOrDefault(c => c.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+        }
         private void SalveazaClientiInFisier()
         {
             using (StreamWriter writer = new StreamWriter(caleFisierClienti))

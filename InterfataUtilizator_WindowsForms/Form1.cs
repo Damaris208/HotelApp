@@ -18,8 +18,10 @@ namespace InterfataUtilizator_WindowsForms
         private DataGridView dgvCamere;
         private Label lblStatistici;
 
-        private TextBox txtNume, txtPrenume, txtTelefon, txtEmail;
-        private Label lblNume, lblPrenume, lblTelefon, lblEmail, lblMesajEroare;
+        private TextBox txtNume, txtPrenume, txtTelefon, txtEmail, txtNumarCamera;
+        private Label lblNume, lblPrenume, lblTelefon, lblEmail, lblMesajEroare, lblNumarCamera, lblMesajCamera;
+        private CheckBox cbOcupata, cbWiFi, cbTV, cbAC, cbFrigider, cbBalcon;
+        private RadioButton rbSingle, rbDouble, rbQuad, rbSuite, rbDeluxe;
 
         public Form1()
         {
@@ -31,11 +33,12 @@ namespace InterfataUtilizator_WindowsForms
 
         private void ConfigureazaFormular()
         {
-            this.Text = "Detalii Camere Hotel + Clienti";
-            this.Size = new Size(900, 700);
+            this.Text = "Hotel Management System";
+            this.Size = new Size(1000, 750);
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.BackColor = Color.WhiteSmoke;
+            this.BackColor = Color.FromArgb(240, 245, 249);
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
+            this.Font = new Font("Segoe UI", 9);
         }
 
         private void AdaugaControale()
@@ -45,191 +48,470 @@ namespace InterfataUtilizator_WindowsForms
                 Dock = DockStyle.Fill,
                 RowCount = 3,
                 ColumnCount = 1,
-                BackColor = Color.White
+                BackColor = Color.White,
+                Padding = new Padding(0, 0, 0, 5)
             };
 
-            panelPrincipal.RowStyles.Add(new RowStyle(SizeType.Absolute, 60));  // Antet
-            panelPrincipal.RowStyles.Add(new RowStyle(SizeType.Percent, 100)); // Conținut (form + tabel)
-            panelPrincipal.RowStyles.Add(new RowStyle(SizeType.Absolute, 40)); // Statistici
+            panelPrincipal.RowStyles.Add(new RowStyle(SizeType.Absolute, 70));
+            panelPrincipal.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+            panelPrincipal.RowStyles.Add(new RowStyle(SizeType.Absolute, 50));
 
             this.Controls.Add(panelPrincipal);
 
-            // Antet
             var panelAntet = new Panel
             {
-                BackColor = Color.SteelBlue,
+                BackColor = Color.FromArgb(44, 62, 80),
                 Dock = DockStyle.Fill
             };
 
             var lblTitlu = new Label
             {
-                Text = "LISTA CAMERE HOTEL",
-                Font = new Font("Segoe UI", 18, FontStyle.Bold),
+                Text = "HOTEL MANAGEMENT",
+                Font = new Font("Segoe UI", 12, FontStyle.Bold),
                 ForeColor = Color.White,
                 AutoSize = true,
-                Location = new Point(20, 15)
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter
             };
 
             panelAntet.Controls.Add(lblTitlu);
             panelPrincipal.Controls.Add(panelAntet);
 
-            // Zona mijloc: 2 coloane - formular + tabel
             var zonaMijloc = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
                 ColumnCount = 2,
-                RowCount = 1
+                RowCount = 1,
+                Padding = new Padding(10, 10, 10, 0)
             };
             zonaMijloc.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
-            zonaMijloc.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
+            zonaMijloc.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 45));
 
             panelPrincipal.Controls.Add(zonaMijloc);
 
-            // Formular în partea stângă
-            var panelFormular = new TableLayoutPanel
+            var panelFormular = new Panel
             {
                 Dock = DockStyle.Fill,
-                Padding = new Padding(40, 10, 20, 20),
+                Padding = new Padding(15),
+                BackColor = Color.White,
+                BorderStyle = BorderStyle.FixedSingle
+            };
+
+            var panelFormularContent = new TableLayoutPanel
+            {
+
+                Text = "GESTIONARE CLIENTI",
+                Dock = DockStyle.Fill,
                 ColumnCount = 2,
-                RowCount = 9,
+                RowCount = 20,
                 AutoSize = true
             };
 
-            panelFormular.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35));
-            panelFormular.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65));
-            for (int i = 0; i < 9; i++)
-                panelFormular.RowStyles.Add(new RowStyle(SizeType.Absolute, i == 4 ? 45 : 35));
+            var separatorClient = new Label
+            {
+                Text = "GESTIONARE CLIENTI",
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                ForeColor = Color.FromArgb(44, 62, 80),
+                Anchor = AnchorStyles.Left,
+                AutoSize = true,
+                Margin = new Padding(0, 10, 0, 5)
+            };
 
-            lblNume = new Label { Text = "Nume:", Anchor = AnchorStyles.Left, AutoSize = true };
-            txtNume = new TextBox { Width = 250 };
-            lblPrenume = new Label { Text = "Prenume:", Anchor = AnchorStyles.Left, AutoSize = true };
-            txtPrenume = new TextBox { Width = 250 };
-            lblTelefon = new Label { Text = "Telefon:", Anchor = AnchorStyles.Left, AutoSize = true };
-            txtTelefon = new TextBox { Width = 250 };
-            lblEmail = new Label { Text = "Email:", Anchor = AnchorStyles.Left, AutoSize = true };
-            txtEmail = new TextBox { Width = 250 };
+            panelFormularContent.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35));
+            panelFormularContent.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65));
+            for (int i = 0; i < 20; i++)
+                panelFormularContent.RowStyles.Add(new RowStyle(SizeType.Absolute, i == 4 || i == 14 ? 45 : 35));
 
-            var btnAdauga = new Button
+            lblNume = new Label { Text = "Nume:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 6, FontStyle.Bold) };
+            txtNume = new TextBox { Width = 200, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 6) };
+            lblPrenume = new Label { Text = "Prenume:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 6, FontStyle.Bold) };
+            txtPrenume = new TextBox { Width = 200, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 6) };
+            lblTelefon = new Label { Text = "Telefon:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 6, FontStyle.Bold) };
+            txtTelefon = new TextBox { Width = 200, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 6) };
+            lblEmail = new Label { Text = "Email:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 6, FontStyle.Bold) };
+            txtEmail = new TextBox { Width = 200, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 6) };
+
+            var btnAdaugaClient = new Button
             {
                 Text = "Adaugă Client",
                 Width = 180,
-                Height = 35,
-                BackColor = Color.SteelBlue,
+                Height = 25,
+                BackColor = Color.FromArgb(52, 152, 219),
                 ForeColor = Color.White,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Anchor = AnchorStyles.Left
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 6, FontStyle.Bold),
+                Anchor = AnchorStyles.Left,
+                Cursor = Cursors.Hand
             };
-            btnAdauga.Click += BtnAdaugaClient_Click;
+            btnAdaugaClient.FlatAppearance.BorderSize = 0;
+            btnAdaugaClient.Click += BtnAdaugaClient_Click;
 
             lblMesajEroare = new Label
             {
                 ForeColor = Color.Red,
                 AutoSize = true,
-                Anchor = AnchorStyles.Left
+                Anchor = AnchorStyles.Left,
+                Font = new Font("Segoe UI", 6)
             };
 
-            Label lblCauta = new Label { Text = "Caută client (Nume Prenume):", Anchor = AnchorStyles.Left, AutoSize = true };
-            TextBox txtCauta = new TextBox { Width = 250 };
+            var separatorCamera = new Label
+            {
+                Text = "GESTIONARE CAMERE",
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                ForeColor = Color.FromArgb(44, 62, 80),
+                Anchor = AnchorStyles.Left,
+                AutoSize = true,
+                Margin = new Padding(0, 10, 0, 5)
+            };
+
+            lblNumarCamera = new Label { Text = "Număr cameră:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 6, FontStyle.Bold) };
+            txtNumarCamera = new TextBox { Width = 100, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 6) };
+
+            var lblTipCamera = new Label { Text = "Tip cameră:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 6, FontStyle.Bold) };
+            var panelTipCamera = new FlowLayoutPanel { AutoSize = true, Anchor = AnchorStyles.Left, FlowDirection = FlowDirection.LeftToRight };
+            rbSingle = new RadioButton { Text = "Single", Checked = true, AutoSize = true, Font = new Font("Segoe UI", 6) };
+            rbDouble = new RadioButton { Text = "Double", AutoSize = true, Font = new Font("Segoe UI", 6) };
+            rbQuad = new RadioButton { Text = "Quad", AutoSize = true, Font = new Font("Segoe UI", 6) };
+            rbSuite = new RadioButton { Text = "Suite", AutoSize = true, Font = new Font("Segoe UI", 6) };
+            rbDeluxe = new RadioButton { Text = "Deluxe", AutoSize = true, Font = new Font("Segoe UI", 6) };
+            panelTipCamera.Controls.AddRange(new Control[] { rbSingle, rbDouble, rbQuad, rbSuite, rbDeluxe });
+
+            var lblOptiuniCamera = new Label { Text = "Opțiuni:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 6, FontStyle.Bold) };
+            var panelOptiuniCamera = new FlowLayoutPanel
+            {
+                AutoSize = true,
+                Anchor = AnchorStyles.Left,
+                FlowDirection = FlowDirection.LeftToRight,
+                WrapContents = true
+            };
+
+            cbWiFi = new CheckBox { Text = "WiFi", AutoSize = true, Font = new Font("Segoe UI", 6) };
+            cbTV = new CheckBox { Text = "TV", AutoSize = true, Font = new Font("Segoe UI", 6) };
+            cbAC = new CheckBox { Text = "Aer cond.", AutoSize = true, Font = new Font("Segoe UI", 6) };
+            cbFrigider = new CheckBox { Text = "Frigider", AutoSize = true, Font = new Font("Segoe UI", 6) };
+            cbBalcon = new CheckBox { Text = "Balcon", AutoSize = true, Font = new Font("Segoe UI", 6) };
+
+            panelOptiuniCamera.Controls.AddRange(new Control[] { cbWiFi, cbTV, cbAC, cbFrigider, cbBalcon });
+
+            var lblOcupareCamera = new Label { Text = "Ocupată:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 6, FontStyle.Bold) };
+            var panelOcupare = new FlowLayoutPanel { AutoSize = true, Anchor = AnchorStyles.Left };
+            cbOcupata = new CheckBox { AutoSize = true, Font = new Font("Segoe UI", 6) };
+            var lblDa = new Label { Text = "Da", AutoSize = true, Anchor = AnchorStyles.Left, Margin = new Padding(0, 6, 0, 0), Font = new Font("Segoe UI", 6) };
+            panelOcupare.Controls.Add(cbOcupata);
+            panelOcupare.Controls.Add(lblDa);
+
+            var panelButoaneCamera = new FlowLayoutPanel
+            {
+                AutoSize = true,
+                Anchor = AnchorStyles.Left,
+                FlowDirection = FlowDirection.LeftToRight,
+                WrapContents = false
+            };
+            var btnAdaugaCamera = new Button
+            {
+                Text = "Adaugă cameră",
+                Width = 120,
+                Height = 20,
+                BackColor = Color.FromArgb(52, 152, 219),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 6, FontStyle.Bold),
+                Cursor = Cursors.Hand
+            };
+            btnAdaugaCamera.FlatAppearance.BorderSize = 0;
+            var btnRefresh = new Button
+            {
+                Text = "Refresh",
+                Width = 80,
+                Height = 20,
+                BackColor = Color.FromArgb(46, 204, 113),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 6, FontStyle.Bold),
+                Cursor = Cursors.Hand
+            };
+            btnRefresh.FlatAppearance.BorderSize = 0;
+            panelButoaneCamera.Controls.AddRange(new Control[] { btnAdaugaCamera, btnRefresh });
+
+
+            var panelCautare = new FlowLayoutPanel
+            {
+                FlowDirection = FlowDirection.LeftToRight,
+                AutoSize = true,
+                Dock = DockStyle.Top,
+                WrapContents = false,
+                Padding = new Padding(0, 10, 0, 10)
+            };
+
+            Label lblCriteriuCautare = new Label
+            {
+                Text = "Căutare după ",
+                AutoSize = true,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleLeft
+            };
+
+            ComboBox cmbCriteriuCautare = new ComboBox
+            {
+                Width = 150,
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Font = new Font("Segoe UI", 9)
+            };
+            cmbCriteriuCautare.Items.AddRange(new string[] { "Nume și Prenume", "Număr Telefon", "Adresă Email" });
+            cmbCriteriuCautare.SelectedIndex = 0;
+
+            TextBox txtCauta = new TextBox
+            {
+                Width = 200,
+                BorderStyle = BorderStyle.FixedSingle,
+                Font = new Font("Segoe UI", 9)
+            };
+
             Button btnCauta = new Button
             {
                 Text = "Caută",
-                Width = 100,
-                Height = 30,
-                BackColor = Color.MediumSeaGreen,
+                Width = 80,
+                Height = 28,
+                BackColor = Color.FromArgb(46, 204, 113),
                 ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
-                Anchor = AnchorStyles.Left
+                Cursor = Cursors.Hand
             };
+            btnCauta.FlatAppearance.BorderSize = 0;
+
             Label lblRezultatCautare = new Label
             {
                 AutoSize = true,
                 ForeColor = Color.DarkBlue,
-                Anchor = AnchorStyles.Left
+                Font = new Font("Segoe UI", 9)
+            };
+
+            panelCautare.Controls.Add(lblCriteriuCautare);
+            panelCautare.Controls.Add(cmbCriteriuCautare);
+            panelCautare.Controls.Add(txtCauta);
+            panelCautare.Controls.Add(btnCauta);
+            panelFormularContent.Controls.Add(panelCautare, 0, 14);
+            panelFormularContent.SetColumnSpan(panelCautare, 2);
+            panelFormularContent.Controls.Add(lblRezultatCautare, 0, 15);
+            panelFormularContent.SetColumnSpan(lblRezultatCautare, 2);
+
+
+
+            lblMesajCamera = new Label
+            {
+                ForeColor = Color.Red,
+                AutoSize = true,
+                Anchor = AnchorStyles.Left,
+                Font = new Font("Segoe UI", 6)
+            };
+
+
+
+            Label lblCauta = new Label
+            {
+                Text = "Introduceți numele și prenumele:",
+                Anchor = AnchorStyles.Left,
+                AutoSize = true,
+                Font = new Font("Segoe UI", 6, FontStyle.Bold)
+            };
+
+
+            cmbCriteriuCautare.SelectedIndexChanged += (s, e) =>
+            {
+                switch (cmbCriteriuCautare.SelectedItem.ToString())
+                {
+                    case "Nume și Prenume":
+                        lblCauta.Text = "Introduceți numele și prenumele:";
+                        break;
+                    case "Număr Telefon":
+                        lblCauta.Text = "Introduceți numărul de telefon:";                  
+                        break;
+                    case "Adresă Email":
+                        lblCauta.Text = "Introduceți adresa de email:";
+                        break;
+                }
             };
 
             btnCauta.Click += (s, e) =>
             {
-                string[] numePrenume = txtCauta.Text.Trim().Split(' ');
-                if (numePrenume.Length != 2)
+                string criteriu = cmbCriteriuCautare.SelectedItem.ToString();
+                string valoare = txtCauta.Text.Trim();
+                var adminClienti = new AdministrareClienti();
+                Client clientGasit = null;
+
+                if (string.IsNullOrWhiteSpace(valoare))
                 {
-                    lblRezultatCautare.Text = "Introduceți nume și prenume separate prin spațiu.";
                     lblRezultatCautare.ForeColor = Color.Red;
+                    lblRezultatCautare.Text = "Introduceți o valoare pentru căutare!";
                     return;
                 }
 
-                var adminClienti = new AdministrareClienti();
-                var clientGasit = adminClienti.CautaClient(numePrenume[0], numePrenume[1]);
+                switch (criteriu)
+                {
+                    case "Nume și Prenume":
+                        var split = valoare.Split(' ');
+                        if (split.Length != 2)
+                        {
+                            lblRezultatCautare.Text = "Introduceți Nume și Prenume separate prin spațiu!";
+                            lblRezultatCautare.ForeColor = Color.Red;
+                            return;
+                        }
+                        clientGasit = adminClienti.CautaClient(split[0], split[1]);
+                        break;
+
+                    case "Număr Telefon":
+                        clientGasit = adminClienti.CautaClientDupaTelefon(valoare);
+                        break;
+
+                    case "Adresă Email":
+                        clientGasit = adminClienti.CautaClientDupaEmail(valoare);
+                        break;
+                }
 
                 if (clientGasit != null)
                 {
-                    lblRezultatCautare.Text = $"Client găsit: {clientGasit.Nume} {clientGasit.Prenume}, {clientGasit.Telefon}, {clientGasit.Email}";
                     lblRezultatCautare.ForeColor = Color.Green;
+                    lblRezultatCautare.Text = $"Client găsit: {clientGasit.Nume} {clientGasit.Prenume} " +
+                                              $"Telefon: {clientGasit.Telefon} Email: {clientGasit.Email}";
                 }
                 else
                 {
-                    lblRezultatCautare.Text = "Clientul nu a fost găsit.";
                     lblRezultatCautare.ForeColor = Color.Red;
+                    lblRezultatCautare.Text = "Niciun client găsit.";
                 }
             };
 
-            // Adaugare controale în formular
-            panelFormular.Controls.Add(lblNume, 0, 0);
-            panelFormular.Controls.Add(txtNume, 1, 0);
-            panelFormular.Controls.Add(lblPrenume, 0, 1);
-            panelFormular.Controls.Add(txtPrenume, 1, 1);
-            panelFormular.Controls.Add(lblTelefon, 0, 2);
-            panelFormular.Controls.Add(txtTelefon, 1, 2);
-            panelFormular.Controls.Add(lblEmail, 0, 3);
-            panelFormular.Controls.Add(txtEmail, 1, 3);
-            panelFormular.Controls.Add(btnAdauga, 1, 4);
-            panelFormular.Controls.Add(lblMesajEroare, 1, 5);
-            panelFormular.Controls.Add(lblCauta, 0, 6);
-            panelFormular.Controls.Add(txtCauta, 1, 6);
-            panelFormular.Controls.Add(btnCauta, 1, 7);
-            panelFormular.Controls.Add(lblRezultatCautare, 1, 8);
+            btnAdaugaCamera.Click += (s, e) =>
+            {
+                if (string.IsNullOrEmpty(txtNumarCamera.Text))
+                {
+                    lblMesajCamera.Text = "Introduceți numărul camerei!";
+                    return;
+                }
 
+                TipCamera tip = rbSingle.Checked ? TipCamera.Single :
+                               rbDouble.Checked ? TipCamera.Double :
+                               rbQuad.Checked ? TipCamera.Quad :
+                               rbSuite.Checked ? TipCamera.Suite :
+                               TipCamera.Deluxe;
+
+                OptiuniCamera optiuni = OptiuniCamera.Niciuna;
+                if (cbWiFi.Checked) optiuni |= OptiuniCamera.WiFi;
+                if (cbTV.Checked) optiuni |= OptiuniCamera.TV;
+                if (cbAC.Checked) optiuni |= OptiuniCamera.AerConditionat;
+                if (cbFrigider.Checked) optiuni |= OptiuniCamera.Frigider;
+                if (cbBalcon.Checked) optiuni |= OptiuniCamera.Balcon;
+
+                try
+                {
+                    string numeFisier = ConfigurationManager.AppSettings["NumeFisier"];
+                    string locatieFisierSolutie = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+                    string caleCompletaFisier = Path.Combine(locatieFisierSolutie, numeFisier);
+
+                    var cameraNoua = new Camera(
+                        int.Parse(txtNumarCamera.Text),
+                        tip,
+                        optiuni,
+                        cbOcupata.Checked
+                    );
+
+                    AdministrareCamere adminCamere = new AdministrareCamere(caleCompletaFisier);
+                    adminCamere.AdaugaCamera(cameraNoua);
+
+                    lblMesajCamera.ForeColor = Color.Green;
+                    lblMesajCamera.Text = "Camera adăugată cu succes!";
+                    txtNumarCamera.Text = "";
+                    cbOcupata.Checked = false;
+                    cbWiFi.Checked = cbTV.Checked = cbAC.Checked = cbFrigider.Checked = cbBalcon.Checked = false;
+                }
+                catch (Exception ex)
+                {
+                    lblMesajCamera.Text = $"Eroare: {ex.Message}";
+                }
+            };
+
+            btnRefresh.Click += (s, e) => IncarcaCamere();
+
+            panelFormularContent.Controls.Add(separatorClient, 0, 0);
+            panelFormularContent.SetColumnSpan(separatorClient, 2);
+            panelFormularContent.Controls.Add(lblNume, 0, 1);
+            panelFormularContent.Controls.Add(txtNume, 1, 1);
+            panelFormularContent.Controls.Add(lblPrenume, 0, 2);
+            panelFormularContent.Controls.Add(txtPrenume, 1, 2);
+            panelFormularContent.Controls.Add(lblTelefon, 0, 3);
+            panelFormularContent.Controls.Add(txtTelefon, 1, 3);
+            panelFormularContent.Controls.Add(lblEmail, 0, 4);
+            panelFormularContent.Controls.Add(txtEmail, 1, 4);
+            panelFormularContent.Controls.Add(btnAdaugaClient, 1, 5);
+            panelFormularContent.Controls.Add(lblMesajEroare, 1, 6);
+            panelFormularContent.Controls.Add(separatorCamera, 0, 7);
+            panelFormularContent.SetColumnSpan(separatorCamera, 2);
+            panelFormularContent.Controls.Add(lblNumarCamera, 0, 8);
+            panelFormularContent.Controls.Add(txtNumarCamera, 1, 8);
+            panelFormularContent.Controls.Add(lblTipCamera, 0, 9);
+            panelFormularContent.Controls.Add(panelTipCamera, 1, 9);
+            panelFormularContent.Controls.Add(lblOptiuniCamera, 0, 10);
+            panelFormularContent.Controls.Add(panelOptiuniCamera, 1, 10);
+            panelFormularContent.Controls.Add(lblOcupareCamera, 0, 11);
+            panelFormularContent.Controls.Add(panelOcupare, 1, 11);
+            panelFormularContent.Controls.Add(panelButoaneCamera, 1, 12);
+            panelFormularContent.Controls.Add(lblMesajCamera, 0, 13);
+            panelFormularContent.SetColumnSpan(lblMesajCamera, 2);
+            panelFormularContent.Controls.Add(lblRezultatCautare, 0, 16);
+            panelFormularContent.SetColumnSpan(lblRezultatCautare, 2);
+            panelFormular.Controls.Add(panelFormularContent);
             zonaMijloc.Controls.Add(panelFormular, 0, 0);
 
-            // Tabel camere în partea dreaptă
             var panelTabel = new Panel
             {
                 Dock = DockStyle.Fill,
-                Padding = new Padding(20),
-                BackColor = Color.White
+                Padding = new Padding(10, 15, 15, 15),
+                BackColor = Color.White,
+                BorderStyle = BorderStyle.FixedSingle
             };
 
             dgvCamere = new DataGridView
             {
                 BackgroundColor = Color.White,
-                BorderStyle = BorderStyle.Fixed3D,
+                BorderStyle = BorderStyle.None,
                 Dock = DockStyle.Fill,
-                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 AllowUserToAddRows = false,
                 ReadOnly = true,
                 RowHeadersVisible = false,
-                ScrollBars = ScrollBars.Vertical,
-                Font = new Font("Segoe UI", 10),
+                Font = new Font("Segoe UI", 9),
                 ColumnHeadersHeight = 30,
-                RowTemplate = { Height = 26 }
+                RowTemplate = { Height = 28 },
+                AllowUserToResizeColumns = false,
+                AllowUserToResizeRows = false,
+                GridColor = Color.FromArgb(230, 230, 230)
             };
 
             dgvCamere.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            dgvCamere.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(44, 62, 80);
+            dgvCamere.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgvCamere.EnableHeadersVisualStyles = false;
+            dgvCamere.RowHeadersDefaultCellStyle.SelectionBackColor = Color.Transparent;
+            dgvCamere.DefaultCellStyle.SelectionBackColor = Color.FromArgb(240, 240, 240);
+            dgvCamere.DefaultCellStyle.SelectionForeColor = Color.Black;
+
             panelTabel.Controls.Add(dgvCamere);
             zonaMijloc.Controls.Add(panelTabel, 1, 0);
 
-            // Statistici
             var panelStatistici = new Panel
             {
-                BackColor = Color.LightSteelBlue,
+                BackColor = Color.FromArgb(44, 62, 80),
                 Dock = DockStyle.Fill,
-                Height = 40
+                Height = 50
             };
 
             lblStatistici = new Label
             {
                 Text = "Statistici camere...",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                ForeColor = Color.DarkSlateGray,
+                ForeColor = Color.White,
                 Dock = DockStyle.Fill,
                 TextAlign = ContentAlignment.MiddleCenter
             };
@@ -237,7 +519,6 @@ namespace InterfataUtilizator_WindowsForms
             panelStatistici.Controls.Add(lblStatistici);
             panelPrincipal.Controls.Add(panelStatistici);
         }
-
 
         private void BtnAdaugaClient_Click(object sender, EventArgs e)
         {
@@ -319,8 +600,8 @@ namespace InterfataUtilizator_WindowsForms
 
                 dgvCamere.Columns["Numar"].Width = 80;
                 dgvCamere.Columns["Optiuni"].Width = 250;
-                dgvCamere.Columns["Tip"].Width = 150;
-                dgvCamere.Columns["EsteOcupata"].Width = 100;
+                dgvCamere.Columns["Tip"].Width = 80;
+                dgvCamere.Columns["EsteOcupata"].Width = 80;
 
                 foreach (var camera in camere)
                 {
@@ -333,7 +614,9 @@ namespace InterfataUtilizator_WindowsForms
                 }
 
                 dgvCamere.Columns["EsteOcupata"].DefaultCellStyle.ForeColor = Color.Red;
-                dgvCamere.Columns["EsteOcupata"].DefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+                dgvCamere.Columns["EsteOcupata"].DefaultCellStyle.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+
+                dgvCamere.RowsDefaultCellStyle.BackColor = Color.White;
 
                 int total = camere.Count;
                 int ocupate = camere.Count(c => c.EsteOcupata);
