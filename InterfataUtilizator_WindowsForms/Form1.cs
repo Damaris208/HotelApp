@@ -23,6 +23,8 @@ namespace InterfataUtilizator_WindowsForms
         private CheckBox cbOcupata, cbWiFi, cbTV, cbAC, cbFrigider, cbBalcon;
         private RadioButton rbSingle, rbDouble, rbQuad, rbSuite, rbDeluxe;
 
+        private Camera cameraSelectata = null;
+
         public Form1()
         {
             InitializeComponent();
@@ -39,6 +41,26 @@ namespace InterfataUtilizator_WindowsForms
             this.BackColor = Color.FromArgb(240, 245, 249);
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.Font = new Font("Segoe UI", 9);
+        }
+
+        private Button CreeazaButon(string text, Color backColor, EventHandler handler, int width = 120, int height = 30)
+        {
+            var btn = new Button
+            {
+                Text = text,
+                Width = width,
+                Height = height,
+                BackColor = backColor,
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 8, FontStyle.Bold),
+                Cursor = Cursors.Hand,
+                Anchor = AnchorStyles.Left
+            };
+            btn.FlatAppearance.BorderSize = 0;
+            if (handler != null)
+                btn.Click += handler;
+            return btn;
         }
 
         private void AdaugaControale()
@@ -99,7 +121,6 @@ namespace InterfataUtilizator_WindowsForms
 
             var panelFormularContent = new TableLayoutPanel
             {
-
                 Text = "GESTIONARE CLIENTI",
                 Dock = DockStyle.Fill,
                 ColumnCount = 2,
@@ -122,61 +143,48 @@ namespace InterfataUtilizator_WindowsForms
             for (int i = 0; i < 20; i++)
                 panelFormularContent.RowStyles.Add(new RowStyle(SizeType.Absolute, i == 4 || i == 14 ? 45 : 35));
 
-            lblNume = new Label { Text = "Nume:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 6, FontStyle.Bold) };
-            txtNume = new TextBox { Width = 200, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 6) };
-            lblPrenume = new Label { Text = "Prenume:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 6, FontStyle.Bold) };
-            txtPrenume = new TextBox { Width = 200, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 6) };
-            lblTelefon = new Label { Text = "Telefon:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 6, FontStyle.Bold) };
-            txtTelefon = new TextBox { Width = 200, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 6) };
-            lblEmail = new Label { Text = "Email:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 6, FontStyle.Bold) };
-            txtEmail = new TextBox { Width = 200, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 6) };
+            lblNume = new Label { Text = "Nume:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 8, FontStyle.Bold) };
+            txtNume = new TextBox { Width = 200, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 8) };
+            lblPrenume = new Label { Text = "Prenume:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 8, FontStyle.Bold) };
+            txtPrenume = new TextBox { Width = 200, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 8) };
+            lblTelefon = new Label { Text = "Telefon:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 8, FontStyle.Bold) };
+            txtTelefon = new TextBox { Width = 200, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 8) };
+            lblEmail = new Label { Text = "Email:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 8, FontStyle.Bold) };
+            txtEmail = new TextBox { Width = 200, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 8) };
 
-            var btnAdaugaClient = new Button
-            {
-                Text = "Adaugă Client",
-                Width = 180,
-                Height = 25,
-                BackColor = Color.FromArgb(52, 152, 219),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 6, FontStyle.Bold),
-                Anchor = AnchorStyles.Left,
-                Cursor = Cursors.Hand
-            };
-            btnAdaugaClient.FlatAppearance.BorderSize = 0;
-            btnAdaugaClient.Click += BtnAdaugaClient_Click;
+            var btnAdaugaClient = CreeazaButon("Adaugă Client", Color.FromArgb(52, 152, 219), BtnAdaugaClient_Click, 150, 30);
 
             lblMesajEroare = new Label
             {
                 ForeColor = Color.Red,
                 AutoSize = true,
                 Anchor = AnchorStyles.Left,
-                Font = new Font("Segoe UI", 6)
+                Font = new Font("Segoe UI", 8)
             };
 
             var separatorCamera = new Label
             {
                 Text = "GESTIONARE CAMERE",
-                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 ForeColor = Color.FromArgb(44, 62, 80),
                 Anchor = AnchorStyles.Left,
                 AutoSize = true,
                 Margin = new Padding(0, 10, 0, 5)
             };
 
-            lblNumarCamera = new Label { Text = "Număr cameră:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 6, FontStyle.Bold) };
-            txtNumarCamera = new TextBox { Width = 100, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 6) };
+            lblNumarCamera = new Label { Text = "Număr cameră:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 8, FontStyle.Bold) };
+            txtNumarCamera = new TextBox { Width = 100, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 8) };
 
-            var lblTipCamera = new Label { Text = "Tip cameră:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 6, FontStyle.Bold) };
+            var lblTipCamera = new Label { Text = "Tip cameră:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 8, FontStyle.Bold) };
             var panelTipCamera = new FlowLayoutPanel { AutoSize = true, Anchor = AnchorStyles.Left, FlowDirection = FlowDirection.LeftToRight };
-            rbSingle = new RadioButton { Text = "Single", Checked = true, AutoSize = true, Font = new Font("Segoe UI", 6) };
-            rbDouble = new RadioButton { Text = "Double", AutoSize = true, Font = new Font("Segoe UI", 6) };
-            rbQuad = new RadioButton { Text = "Quad", AutoSize = true, Font = new Font("Segoe UI", 6) };
-            rbSuite = new RadioButton { Text = "Suite", AutoSize = true, Font = new Font("Segoe UI", 6) };
-            rbDeluxe = new RadioButton { Text = "Deluxe", AutoSize = true, Font = new Font("Segoe UI", 6) };
+            rbSingle = new RadioButton { Text = "Single", Checked = true, AutoSize = true, Font = new Font("Segoe UI", 8) };
+            rbDouble = new RadioButton { Text = "Double", AutoSize = true, Font = new Font("Segoe UI", 8) };
+            rbQuad = new RadioButton { Text = "Quad", AutoSize = true, Font = new Font("Segoe UI", 8) };
+            rbSuite = new RadioButton { Text = "Suite", AutoSize = true, Font = new Font("Segoe UI", 8) };
+            rbDeluxe = new RadioButton { Text = "Deluxe", AutoSize = true, Font = new Font("Segoe UI", 8) };
             panelTipCamera.Controls.AddRange(new Control[] { rbSingle, rbDouble, rbQuad, rbSuite, rbDeluxe });
 
-            var lblOptiuniCamera = new Label { Text = "Opțiuni:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 6, FontStyle.Bold) };
+            var lblOptiuniCamera = new Label { Text = "Opțiuni:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 8, FontStyle.Bold) };
             var panelOptiuniCamera = new FlowLayoutPanel
             {
                 AutoSize = true,
@@ -185,18 +193,18 @@ namespace InterfataUtilizator_WindowsForms
                 WrapContents = true
             };
 
-            cbWiFi = new CheckBox { Text = "WiFi", AutoSize = true, Font = new Font("Segoe UI", 6) };
-            cbTV = new CheckBox { Text = "TV", AutoSize = true, Font = new Font("Segoe UI", 6) };
-            cbAC = new CheckBox { Text = "Aer cond.", AutoSize = true, Font = new Font("Segoe UI", 6) };
-            cbFrigider = new CheckBox { Text = "Frigider", AutoSize = true, Font = new Font("Segoe UI", 6) };
-            cbBalcon = new CheckBox { Text = "Balcon", AutoSize = true, Font = new Font("Segoe UI", 6) };
+            cbWiFi = new CheckBox { Text = "WiFi", AutoSize = true, Font = new Font("Segoe UI", 8) };
+            cbTV = new CheckBox { Text = "TV", AutoSize = true, Font = new Font("Segoe UI", 8) };
+            cbAC = new CheckBox { Text = "Aer cond.", AutoSize = true, Font = new Font("Segoe UI", 8) };
+            cbFrigider = new CheckBox { Text = "Frigider", AutoSize = true, Font = new Font("Segoe UI", 8) };
+            cbBalcon = new CheckBox { Text = "Balcon", AutoSize = true, Font = new Font("Segoe UI", 8) };
 
             panelOptiuniCamera.Controls.AddRange(new Control[] { cbWiFi, cbTV, cbAC, cbFrigider, cbBalcon });
 
-            var lblOcupareCamera = new Label { Text = "Ocupată:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 6, FontStyle.Bold) };
+            var lblOcupareCamera = new Label { Text = "Ocupată:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 8, FontStyle.Bold) };
             var panelOcupare = new FlowLayoutPanel { AutoSize = true, Anchor = AnchorStyles.Left };
-            cbOcupata = new CheckBox { AutoSize = true, Font = new Font("Segoe UI", 6) };
-            var lblDa = new Label { Text = "Da", AutoSize = true, Anchor = AnchorStyles.Left, Margin = new Padding(0, 6, 0, 0), Font = new Font("Segoe UI", 6) };
+            cbOcupata = new CheckBox { AutoSize = true, Font = new Font("Segoe UI", 8) };
+            var lblDa = new Label { Text = "Da", AutoSize = true, Anchor = AnchorStyles.Left, Margin = new Padding(0, 6, 0, 0), Font = new Font("Segoe UI", 8) };
             panelOcupare.Controls.Add(cbOcupata);
             panelOcupare.Controls.Add(lblDa);
 
@@ -207,32 +215,95 @@ namespace InterfataUtilizator_WindowsForms
                 FlowDirection = FlowDirection.LeftToRight,
                 WrapContents = false
             };
-            var btnAdaugaCamera = new Button
-            {
-                Text = "Adaugă cameră",
-                Width = 120,
-                Height = 20,
-                BackColor = Color.FromArgb(52, 152, 219),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 6, FontStyle.Bold),
-                Cursor = Cursors.Hand
-            };
-            btnAdaugaCamera.FlatAppearance.BorderSize = 0;
-            var btnRefresh = new Button
-            {
-                Text = "Refresh",
-                Width = 80,
-                Height = 20,
-                BackColor = Color.FromArgb(46, 204, 113),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 6, FontStyle.Bold),
-                Cursor = Cursors.Hand
-            };
-            btnRefresh.FlatAppearance.BorderSize = 0;
-            panelButoaneCamera.Controls.AddRange(new Control[] { btnAdaugaCamera, btnRefresh });
 
+            var btnAdaugaCamera = CreeazaButon("Salvează cameră", Color.FromArgb(52, 152, 219), (s, e) =>
+            {
+                if (string.IsNullOrEmpty(txtNumarCamera.Text))
+                {
+                    lblMesajCamera.Text = "Introduceți numărul camerei!";
+                    return;
+                }
+
+                int numarNou;
+                if (!int.TryParse(txtNumarCamera.Text, out numarNou))
+                {
+                    lblMesajCamera.Text = "Numărul camerei trebuie să fie un întreg!";
+                    return;
+                }
+
+                TipCamera tip = rbSingle.Checked ? TipCamera.Single :
+                               rbDouble.Checked ? TipCamera.Double :
+                               rbQuad.Checked ? TipCamera.Quad :
+                               rbSuite.Checked ? TipCamera.Suite :
+                               TipCamera.Deluxe;
+
+                OptiuniCamera optiuni = OptiuniCamera.Niciuna;
+                if (cbWiFi.Checked) optiuni |= OptiuniCamera.WiFi;
+                if (cbTV.Checked) optiuni |= OptiuniCamera.TV;
+                if (cbAC.Checked) optiuni |= OptiuniCamera.AerConditionat;
+                if (cbFrigider.Checked) optiuni |= OptiuniCamera.Frigider;
+                if (cbBalcon.Checked) optiuni |= OptiuniCamera.Balcon;
+                bool esteOcupata = cbOcupata.Checked;
+
+                try
+                {
+                    string numeFisier = ConfigurationManager.AppSettings["NumeFisier"];
+                    string locatieFisierSolutie = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+                    string caleCompletaFisier = Path.Combine(locatieFisierSolutie, numeFisier);
+
+                    AdministrareCamere adminCamere = new AdministrareCamere(caleCompletaFisier);
+
+                    if (cameraSelectata == null)
+                    {
+                        var cameraNoua = new Camera(
+                            int.Parse(txtNumarCamera.Text),
+                            tip,
+                            optiuni,
+                            cbOcupata.Checked
+                        );
+
+                        adminCamere.AdaugaCamera(cameraNoua);
+                        lblMesajCamera.ForeColor = Color.Green;
+                        lblMesajCamera.Text = "Camera adăugată cu succes!";
+                    }
+                    else
+                    {
+                        cameraSelectata.Numar = int.Parse(txtNumarCamera.Text);
+                        cameraSelectata.Tip = tip;
+                        cameraSelectata.Optiuni = optiuni;
+                        cameraSelectata.EsteOcupata = cbOcupata.Checked;
+
+                        adminCamere.ActualizeazaCamera(cameraSelectata);
+                        lblMesajCamera.ForeColor = Color.Green;
+                        lblMesajCamera.Text = "Camera actualizată cu succes!";
+                    }
+
+                    txtNumarCamera.Text = "";
+                    cbOcupata.Checked = false;
+                    cbWiFi.Checked = cbTV.Checked = cbAC.Checked = cbFrigider.Checked = cbBalcon.Checked = false;
+                    cameraSelectata = null;
+                    IncarcaCamere();
+                }
+                catch (Exception ex)
+                {
+                    lblMesajCamera.Text = $"Eroare: {ex.Message}";
+                }
+            }, 150, 30);
+
+            var btnAnuleaza = CreeazaButon("Anulează", Color.FromArgb(231, 76, 60), (s, e) =>
+            {
+                cameraSelectata = null;
+                txtNumarCamera.Text = "";
+                cbOcupata.Checked = false;
+                cbWiFi.Checked = cbTV.Checked = cbAC.Checked = cbFrigider.Checked = cbBalcon.Checked = false;
+                lblMesajCamera.Text = "";
+            }, 100, 30);
+
+            var btnRefresh = CreeazaButon("Reîncarcă", Color.FromArgb(46, 204, 113), (s, e) => IncarcaCamere(), 100, 30);
+
+            panelButoaneCamera.Controls.Add(btnAdaugaCamera);
+            panelButoaneCamera.Controls.Add(btnRefresh);
+            panelButoaneCamera.Controls.Add(btnAnuleaza);
 
             var panelCautare = new FlowLayoutPanel
             {
@@ -267,18 +338,7 @@ namespace InterfataUtilizator_WindowsForms
                 Font = new Font("Segoe UI", 9)
             };
 
-            Button btnCauta = new Button
-            {
-                Text = "Caută",
-                Width = 80,
-                Height = 28,
-                BackColor = Color.FromArgb(46, 204, 113),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 9, FontStyle.Bold),
-                Cursor = Cursors.Hand
-            };
-            btnCauta.FlatAppearance.BorderSize = 0;
+            Button btnCauta = CreeazaButon("Caută", Color.FromArgb(46, 204, 113), null, 80, 28);
 
             Label lblRezultatCautare = new Label
             {
@@ -296,26 +356,21 @@ namespace InterfataUtilizator_WindowsForms
             panelFormularContent.Controls.Add(lblRezultatCautare, 0, 15);
             panelFormularContent.SetColumnSpan(lblRezultatCautare, 2);
 
-
-
             lblMesajCamera = new Label
             {
                 ForeColor = Color.Red,
                 AutoSize = true,
                 Anchor = AnchorStyles.Left,
-                Font = new Font("Segoe UI", 6)
+                Font = new Font("Segoe UI", 8)
             };
-
-
 
             Label lblCauta = new Label
             {
                 Text = "Introduceți numele și prenumele:",
                 Anchor = AnchorStyles.Left,
                 AutoSize = true,
-                Font = new Font("Segoe UI", 6, FontStyle.Bold)
+                Font = new Font("Segoe UI", 8, FontStyle.Bold)
             };
-
 
             cmbCriteriuCautare.SelectedIndexChanged += (s, e) =>
             {
@@ -325,7 +380,7 @@ namespace InterfataUtilizator_WindowsForms
                         lblCauta.Text = "Introduceți numele și prenumele:";
                         break;
                     case "Număr Telefon":
-                        lblCauta.Text = "Introduceți numărul de telefon:";                  
+                        lblCauta.Text = "Introduceți numărul de telefon:";
                         break;
                     case "Adresă Email":
                         lblCauta.Text = "Introduceți adresa de email:";
@@ -381,57 +436,6 @@ namespace InterfataUtilizator_WindowsForms
                     lblRezultatCautare.Text = "Niciun client găsit.";
                 }
             };
-
-            btnAdaugaCamera.Click += (s, e) =>
-            {
-                if (string.IsNullOrEmpty(txtNumarCamera.Text))
-                {
-                    lblMesajCamera.Text = "Introduceți numărul camerei!";
-                    return;
-                }
-
-                TipCamera tip = rbSingle.Checked ? TipCamera.Single :
-                               rbDouble.Checked ? TipCamera.Double :
-                               rbQuad.Checked ? TipCamera.Quad :
-                               rbSuite.Checked ? TipCamera.Suite :
-                               TipCamera.Deluxe;
-
-                OptiuniCamera optiuni = OptiuniCamera.Niciuna;
-                if (cbWiFi.Checked) optiuni |= OptiuniCamera.WiFi;
-                if (cbTV.Checked) optiuni |= OptiuniCamera.TV;
-                if (cbAC.Checked) optiuni |= OptiuniCamera.AerConditionat;
-                if (cbFrigider.Checked) optiuni |= OptiuniCamera.Frigider;
-                if (cbBalcon.Checked) optiuni |= OptiuniCamera.Balcon;
-
-                try
-                {
-                    string numeFisier = ConfigurationManager.AppSettings["NumeFisier"];
-                    string locatieFisierSolutie = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
-                    string caleCompletaFisier = Path.Combine(locatieFisierSolutie, numeFisier);
-
-                    var cameraNoua = new Camera(
-                        int.Parse(txtNumarCamera.Text),
-                        tip,
-                        optiuni,
-                        cbOcupata.Checked
-                    );
-
-                    AdministrareCamere adminCamere = new AdministrareCamere(caleCompletaFisier);
-                    adminCamere.AdaugaCamera(cameraNoua);
-
-                    lblMesajCamera.ForeColor = Color.Green;
-                    lblMesajCamera.Text = "Camera adăugată cu succes!";
-                    txtNumarCamera.Text = "";
-                    cbOcupata.Checked = false;
-                    cbWiFi.Checked = cbTV.Checked = cbAC.Checked = cbFrigider.Checked = cbBalcon.Checked = false;
-                }
-                catch (Exception ex)
-                {
-                    lblMesajCamera.Text = $"Eroare: {ex.Message}";
-                }
-            };
-
-            btnRefresh.Click += (s, e) => IncarcaCamere();
 
             panelFormularContent.Controls.Add(separatorClient, 0, 0);
             panelFormularContent.SetColumnSpan(separatorClient, 2);
@@ -518,6 +522,8 @@ namespace InterfataUtilizator_WindowsForms
 
             panelStatistici.Controls.Add(lblStatistici);
             panelPrincipal.Controls.Add(panelStatistici);
+
+            dgvCamere.SelectionChanged += DgvCamere_SelectionChanged;
         }
 
         private void BtnAdaugaClient_Click(object sender, EventArgs e)
@@ -570,6 +576,47 @@ namespace InterfataUtilizator_WindowsForms
             ClearForm();
         }
 
+        private void DgvCamere_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dgvCamere.SelectedRows.Count > 0)
+            {
+                int numarCamera = Convert.ToInt32(dgvCamere.SelectedRows[0].Cells["Numar"].Value);
+
+                string numeFisier = ConfigurationManager.AppSettings["NumeFisier"];
+                string locatieFisierSolutie = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+                string caleCompletaFisier = Path.Combine(locatieFisierSolutie, numeFisier);
+
+                AdministrareCamere adminCamere = new AdministrareCamere(caleCompletaFisier);
+                cameraSelectata = adminCamere.CautaCameraDupaNumar(numarCamera);
+
+                if (cameraSelectata != null)
+                {
+                    AfiseazaCameraSelectata();
+                }
+            }
+        }
+
+        private void AfiseazaCameraSelectata()
+        {
+            txtNumarCamera.Text = cameraSelectata.Numar.ToString();
+            cbOcupata.Checked = cameraSelectata.EsteOcupata;
+
+            rbSingle.Checked = cameraSelectata.Tip == TipCamera.Single;
+            rbDouble.Checked = cameraSelectata.Tip == TipCamera.Double;
+            rbQuad.Checked = cameraSelectata.Tip == TipCamera.Quad;
+            rbSuite.Checked = cameraSelectata.Tip == TipCamera.Suite;
+            rbDeluxe.Checked = cameraSelectata.Tip == TipCamera.Deluxe;
+
+            cbWiFi.Checked = cameraSelectata.Optiuni.HasFlag(OptiuniCamera.WiFi);
+            cbTV.Checked = cameraSelectata.Optiuni.HasFlag(OptiuniCamera.TV);
+            cbAC.Checked = cameraSelectata.Optiuni.HasFlag(OptiuniCamera.AerConditionat);
+            cbFrigider.Checked = cameraSelectata.Optiuni.HasFlag(OptiuniCamera.Frigider);
+            cbBalcon.Checked = cameraSelectata.Optiuni.HasFlag(OptiuniCamera.Balcon);
+
+            lblMesajCamera.Text = "Camera selectată. Puteți modifica și salva.";
+            lblMesajCamera.ForeColor = Color.Blue;
+        }
+
         private void ResetEtichete()
         {
             lblNume.ForeColor = lblPrenume.ForeColor = lblTelefon.ForeColor = lblEmail.ForeColor = Color.Black;
@@ -603,6 +650,8 @@ namespace InterfataUtilizator_WindowsForms
                 dgvCamere.Columns["Tip"].Width = 80;
                 dgvCamere.Columns["EsteOcupata"].Width = 80;
 
+                dgvCamere.Rows.Clear();
+
                 foreach (var camera in camere)
                 {
                     dgvCamere.Rows.Add(
@@ -615,8 +664,6 @@ namespace InterfataUtilizator_WindowsForms
 
                 dgvCamere.Columns["EsteOcupata"].DefaultCellStyle.ForeColor = Color.Red;
                 dgvCamere.Columns["EsteOcupata"].DefaultCellStyle.Font = new Font("Segoe UI", 9, FontStyle.Bold);
-
-                dgvCamere.RowsDefaultCellStyle.BackColor = Color.White;
 
                 int total = camere.Count;
                 int ocupate = camere.Count(c => c.EsteOcupata);

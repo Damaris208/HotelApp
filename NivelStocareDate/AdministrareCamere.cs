@@ -7,7 +7,7 @@ namespace NivelStocareDate
 {
     public class AdministrareCamere
     {
-        private string caleFisier = "camere.txt";
+        private string caleFisier;
         private List<Camera> camere;
 
         public AdministrareCamere(string caleFisier)
@@ -23,6 +23,11 @@ namespace NivelStocareDate
             SalveazaCameraInFisier(camera);
         }
 
+        public Camera CautaCameraDupaId(int id)
+        {
+            return camere.Find(c => c.Id == id);
+        }
+
         public Camera CautaCameraDupaNumar(int numar)
         {
             return camere.Find(c => c.Numar == numar);
@@ -30,26 +35,56 @@ namespace NivelStocareDate
 
         public List<Camera> AfisareCamere()
         {
-            if (camere.Count == 0)
-            {
-                Console.WriteLine("Nu exista camere inregistrate.");
-                return new List<Camera>();  // Return an empty list if no rooms are available
-            }
-
-            return camere;  // Return the list of rooms
+            return camere;
         }
 
+        public bool ActualizeazaCamera(Camera cameraActualizata)
+        {
+            // Căutare după ID (care nu se schimbă)
+            int index = camere.FindIndex(c => c.Id == cameraActualizata.Id);
+
+            if (index >= 0)
+            {
+                // Actualizează camera în listă
+                camere[index] = cameraActualizata;
+
+                // Rescrie întreg fișierul cu lista actualizată
+                RescrieFisierCamere();
+
+                return true;
+            }
+
+            return false;
+        }
 
         private void SalveazaCameraInFisier(Camera camera)
         {
             using (StreamWriter writer = new StreamWriter(caleFisier, append: true))
             {
-                writer.WriteLine($"{camera.Numar},{camera.Tip},{camera.EsteOcupata},{(int)camera.Optiuni}");
+                writer.WriteLine(ConvertesteCameraLaText(camera));
             }
+        }
+
+        private void RescrieFisierCamere()
+        {
+            using (StreamWriter writer = new StreamWriter(caleFisier, append: false))
+            {
+                foreach (Camera camera in camere)
+                {
+                    writer.WriteLine(ConvertesteCameraLaText(camera));
+                }
+            }
+        }
+
+        private string ConvertesteCameraLaText(Camera camera)
+        {
+            return $"{camera.Id},{camera.Numar},{camera.Tip},{camera.EsteOcupata},{(int)camera.Optiuni}";
         }
 
         private void IncarcaCamereDinFisier()
         {
+            camere.Clear(); // Șterge lista existentă înainte de încărcare
+
             if (!File.Exists(caleFisier)) return;
 
             using (StreamReader reader = new StreamReader(caleFisier))
@@ -59,24 +94,24 @@ namespace NivelStocareDate
                 {
                     var date = linie.Split(',');
 
-                    if (date.Length < 3) continue;
+                    if (date.Length < 4) continue;
 
                     try
                     {
-                        int numar = int.Parse(date[0]);
-                        TipCamera tip = (TipCamera)Enum.Parse(typeof(TipCamera), date[1]);
-                        bool esteOcupata = bool.Parse(date[2]);
+                        int id = int.Parse(date[0]);
+                        int numar = int.Parse(date[1]);
+                        TipCamera tip = (TipCamera)Enum.Parse(typeof(TipCamera), date[2]);
+                        bool esteOcupata = bool.Parse(date[3]);
 
                         OptiuniCamera optiuni = OptiuniCamera.Niciuna;
-                        if (date.Length > 3)
+                        if (date.Length > 4)
                         {
-                            int optiuniInt = int.Parse(date[3]);
+                            int optiuniInt = int.Parse(date[4]);
                             optiuni = (OptiuniCamera)optiuniInt;
                         }
 
-                        Camera camera = new Camera(numar, tip, optiuni) { EsteOcupata = esteOcupata };
-                        camere.Add(camera);  // Adăugăm camera în lista de camere
-                        Console.WriteLine($"Camera adăugată: {camera.Info()}");  // Mesaj de debug
+                        Camera camera = new Camera(id, numar, tip, optiuni, esteOcupata);
+                        camere.Add(camera);
                     }
                     catch (Exception ex)
                     {
@@ -85,6 +120,5 @@ namespace NivelStocareDate
                 }
             }
         }
-
     }
 }

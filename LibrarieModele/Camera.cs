@@ -2,6 +2,8 @@
 {
     public class Camera
     {
+        private static int urmatorulId = 1;
+        public int Id { get; private set; }
         public int Numar { get; set; }
         public TipCamera Tip { get; set; }
         public bool EsteOcupata { get; set; }
@@ -9,6 +11,7 @@
 
         public Camera()
         {
+            Id = urmatorulId++;
             Numar = 0;
             Tip = TipCamera.Single;
             EsteOcupata = false;
@@ -17,6 +20,7 @@
 
         public Camera(int numar, TipCamera tip, OptiuniCamera optiuni)
         {
+            Id = urmatorulId++;
             Numar = numar;
             Tip = tip;
             EsteOcupata = false;
@@ -25,10 +29,25 @@
 
         public Camera(int numar, TipCamera tip, OptiuniCamera optiuni, bool esteOcupata)
         {
+            Id = urmatorulId++;
             Numar = numar;
             Tip = tip;
             Optiuni = optiuni;
             EsteOcupata = esteOcupata;
+        }
+
+        public Camera(int id, int numar, TipCamera tip, OptiuniCamera optiuni, bool esteOcupata)
+        {
+            Id = id;
+            Numar = numar;
+            Tip = tip;
+            Optiuni = optiuni;
+            EsteOcupata = esteOcupata;
+
+            if (id >= urmatorulId)
+            {
+                urmatorulId = id + 1;
+            }
         }
 
         public void OcupaCamera()
@@ -43,8 +62,8 @@
 
         public string Info()
         {
-            string stare = EsteOcupata ? "Ocupata" : "Libera";
-            return $"Camera {Numar}, Tip: {Tip}, Optiuni: {Optiuni}, Stare: {stare}";
+            string stare = EsteOcupata ? "Ocupată" : "Liberă";
+            return $"ID: {Id}, Camera {Numar}, Tip: {Tip}, Opțiuni: {Optiuni}, Stare: {stare}";
         }
     }
 }
