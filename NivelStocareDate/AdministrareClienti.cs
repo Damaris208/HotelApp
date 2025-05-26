@@ -8,73 +8,136 @@ namespace NivelStocareDate
 {
     public class AdministrareClienti
     {
-        private string caleFisierClienti = "clienti.txt";
+        private string caleFisierClienti;
         private List<Client> clienti;
 
-        public AdministrareClienti()
+        public AdministrareClienti(string caleFisier = "clienti.txt")
         {
+            caleFisierClienti = caleFisier;
             clienti = new List<Client>();
             IncarcaClientiDinFisier();
         }
 
         public void AdaugaClient(Client client)
         {
+            // Check if client already exists
+            if (clienti.Any(c => c.Nume.Equals(client.Nume, StringComparison.OrdinalIgnoreCase) &&
+                               c.Prenume.Equals(client.Prenume, StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new Exception("Clientul există deja în sistem.");
+            }
+
             clienti.Add(client);
             SalveazaClientiInFisier();
         }
 
-        public void AfisareClienti()
+        public void ActualizeazaClient(Client clientActualizat)
         {
-            if (clienti.Count == 0)
+            // Find the client to update
+            var clientExistent = clienti.FirstOrDefault(c =>
+                c.Nume.Equals(clientActualizat.Nume, StringComparison.OrdinalIgnoreCase) &&
+                c.Prenume.Equals(clientActualizat.Prenume, StringComparison.OrdinalIgnoreCase));
+
+            if (clientExistent == null)
             {
-                Console.WriteLine("Nu exista clienti inregistrati.");
-                return;
+                throw new Exception("Clientul nu a fost găsit pentru actualizare.");
             }
 
-            Console.WriteLine("\nLista clientilor:");
-            foreach (var client in clienti)
-            {
-                Console.WriteLine(client.Info());
-            }
+            // Update the client's properties
+            clientExistent.Telefon = clientActualizat.Telefon;
+            clientExistent.Email = clientActualizat.Email;
+
+            SalveazaClientiInFisier();
+        }
+
+        public List<Client> AfisareClienti()
+        {
+            return clienti.OrderBy(c => c.Nume).ThenBy(c => c.Prenume).ToList();
         }
 
         public Client CautaClient(string nume, string prenume)
         {
-            return clienti.Find(c => c.Nume.Equals(nume, StringComparison.OrdinalIgnoreCase) && c.Prenume.Equals(prenume, StringComparison.OrdinalIgnoreCase));
+            return clienti.Find(c =>
+                c.Nume.Equals(nume, StringComparison.OrdinalIgnoreCase) &&
+                c.Prenume.Equals(prenume, StringComparison.OrdinalIgnoreCase));
         }
+
         public Client CautaClientDupaTelefon(string telefon)
         {
             return clienti.FirstOrDefault(c => c.Telefon == telefon);
         }
+
         public Client CautaClientDupaEmail(string email)
         {
-            return clienti.FirstOrDefault(c => c.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+            return clienti.FirstOrDefault(c =>
+                c.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
         }
+
         private void SalveazaClientiInFisier()
         {
-            using (StreamWriter writer = new StreamWriter(caleFisierClienti))
+            try
             {
-                foreach (var client in clienti)
+                using (StreamWriter writer = new StreamWriter(caleFisierClienti))
                 {
-                    writer.WriteLine($"{client.Nume},{client.Prenume},{client.Telefon},{client.Email}");
+                    foreach (var client in clienti)
+                    {
+                        writer.WriteLine($"{client.Nume},{client.Prenume},{client.Telefon},{client.Email}");
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Eroare la salvarea clientilor în fișier: " + ex.Message);
             }
         }
 
         private void IncarcaClientiDinFisier()
         {
-            if (!File.Exists(caleFisierClienti)) return;
-
-            using (StreamReader reader = new StreamReader(caleFisierClienti))
+            if (!File.Exists(caleFisierClienti))
             {
-                string linie;
-                while ((linie = reader.ReadLine()) != null)
+                // Create the file if it doesn't exist
+                File.Create(caleFisierClienti).Close();
+                return;
+            }
+
+            try
+            {
+                using (StreamReader reader = new StreamReader(caleFisierClienti))
                 {
-                    var date = linie.Split(',');
-                    Client client = new Client(date[0], date[1], date[2], date[3]);
-                    clienti.Add(client);
+                    string linie;
+                    while ((linie = reader.ReadLine()) != null)
+                    {
+                        if (string.IsNullOrWhiteSpace(linie)) continue;
+
+                        var date = linie.Split(',');
+                        if (date.Length != 4) continue; // Skip invalid lines
+
+                        Client client = new Client(
+                            date[0].Trim(),
+                            date[1].Trim(),
+                            date[2].Trim(),
+                            date[3].Trim()
+                        );
+                        clienti.Add(client);
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                throw new Exception("Eroare la încărcarea clientilor din fișier: " + ex.Message);
+            }
+        }
+
+        public bool StergeClient(string nume, string prenume)
+        {
+            var client = CautaClient(nume, prenume);
+            if (client != null)
+            {
+                clienti.Remove(client);
+                SalveazaClientiInFisier();
+                return true;
+            }
+            return false;
         }
     }
 }

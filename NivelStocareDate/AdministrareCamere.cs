@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using NivelModele;
 
 namespace NivelStocareDate
@@ -36,6 +37,10 @@ namespace NivelStocareDate
         public List<Camera> AfisareCamere()
         {
             return camere;
+        }
+        public List<Camera> AfisareCamereDisponibile()
+        {
+            return camere.Where(c => !c.EsteOcupata).ToList();
         }
 
         public bool ActualizeazaCamera(Camera cameraActualizata)
@@ -119,6 +124,16 @@ namespace NivelStocareDate
                     }
                 }
             }
+        }
+
+        public void StergeCamera(int numarCamera)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AdaugaCamera()
+        {
+            throw new NotImplementedException();
         }
     }
 }
