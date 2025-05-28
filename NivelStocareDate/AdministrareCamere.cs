@@ -1,8 +1,9 @@
-﻿using System;
+﻿using NivelModele;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
-using NivelModele;
 
 namespace NivelStocareDate
 {
@@ -11,9 +12,24 @@ namespace NivelStocareDate
         private string caleFisier;
         private List<Camera> camere;
 
-        public AdministrareCamere(string caleFisier)
+        public AdministrareCamere(string caleFisier = null)
         {
-            this.caleFisier = caleFisier;
+            if (string.IsNullOrEmpty(caleFisier))
+            {
+                string numeFisier = System.Configuration.ConfigurationManager.AppSettings["NumeFisierCamere"] ?? "camere.txt";
+                this.caleFisier = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, numeFisier);
+            }
+            else
+            {
+                this.caleFisier = caleFisier;
+            }
+
+            string directory = Path.GetDirectoryName(this.caleFisier);
+            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
             camere = new List<Camera>();
             IncarcaCamereDinFisier();
         }
@@ -64,20 +80,60 @@ namespace NivelStocareDate
 
         private void SalveazaCameraInFisier(Camera camera)
         {
-            using (StreamWriter writer = new StreamWriter(caleFisier, append: true))
+            try
             {
-                writer.WriteLine(ConvertesteCameraLaText(camera));
+                // Verifică dacă fișierul poate fi accesat
+                if (File.Exists(caleFisier))
+                {
+                    using (FileStream fs = File.Open(caleFisier, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                    {
+                        // Fișierul este accesibil
+                    }
+                }
+
+                using (StreamWriter writer = new StreamWriter(caleFisier, append: true))
+                {
+                    writer.WriteLine(ConvertesteCameraLaText(camera));
+                }
+            }
+            catch (IOException ex)
+            {
+                throw new Exception($"Fișierul {caleFisier} este folosit de alt proces sau nu are permisiuni de acces: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Eroare la salvarea camerei în fișier: {ex.Message}", ex);
             }
         }
 
         private void RescrieFisierCamere()
         {
-            using (StreamWriter writer = new StreamWriter(caleFisier, append: false))
+            try
             {
-                foreach (Camera camera in camere)
+                // Verifică dacă fișierul poate fi accesat
+                if (File.Exists(caleFisier))
                 {
-                    writer.WriteLine(ConvertesteCameraLaText(camera));
+                    using (FileStream fs = File.Open(caleFisier, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                    {
+                        // Fișierul este accesibil
+                    }
                 }
+
+                using (StreamWriter writer = new StreamWriter(caleFisier, append: false))
+                {
+                    foreach (Camera camera in camere)
+                    {
+                        writer.WriteLine(ConvertesteCameraLaText(camera));
+                    }
+                }
+            }
+            catch (IOException ex)
+            {
+                throw new Exception($"Fișierul {caleFisier} este folosit de alt proces sau nu are permisiuni de acces: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Eroare la rescrierea fișierului camerelor: {ex.Message}", ex);
             }
         }
 
@@ -88,52 +144,100 @@ namespace NivelStocareDate
 
         private void IncarcaCamereDinFisier()
         {
-            camere.Clear(); // Șterge lista existentă înainte de încărcare
-
-            if (!File.Exists(caleFisier)) return;
-
-            using (StreamReader reader = new StreamReader(caleFisier))
+            try
             {
-                string linie;
-                while ((linie = reader.ReadLine()) != null)
+                // Creează fișierul dacă nu există
+                if (!File.Exists(caleFisier))
                 {
-                    var date = linie.Split(',');
+                    File.Create(caleFisier).Close();
+                    return;
+                }
 
-                    if (date.Length < 4) continue;
+                // Verifică dacă fișierul poate fi accesat
+                using (FileStream fs = File.Open(caleFisier, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    // Fișierul este accesibil pentru citire
+                }
 
-                    try
+                camere.Clear();
+
+                using (StreamReader reader = new StreamReader(caleFisier))
+                {
+                    string linie;
+                    while ((linie = reader.ReadLine()) != null)
                     {
-                        int id = int.Parse(date[0]);
-                        int numar = int.Parse(date[1]);
-                        TipCamera tip = (TipCamera)Enum.Parse(typeof(TipCamera), date[2]);
-                        bool esteOcupata = bool.Parse(date[3]);
+                        if (string.IsNullOrWhiteSpace(linie)) continue;
 
-                        OptiuniCamera optiuni = OptiuniCamera.Niciuna;
-                        if (date.Length > 4)
+                        var date = linie.Split(',');
+                        if (date.Length < 4) continue;
+
+                        try
                         {
-                            int optiuniInt = int.Parse(date[4]);
-                            optiuni = (OptiuniCamera)optiuniInt;
-                        }
+                            int id = int.Parse(date[0]);
+                            int numar = int.Parse(date[1]);
+                            TipCamera tip = (TipCamera)Enum.Parse(typeof(TipCamera), date[2]);
+                            bool esteOcupata = bool.Parse(date[3]);
 
-                        Camera camera = new Camera(id, numar, tip, optiuni, esteOcupata);
-                        camere.Add(camera);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Eroare la procesarea liniei: {linie}. Detalii: {ex.Message}");
+                            OptiuniCamera optiuni = OptiuniCamera.Niciuna;
+                            if (date.Length > 4)
+                            {
+                                int optiuniInt = int.Parse(date[4]);
+                                optiuni = (OptiuniCamera)optiuniInt;
+                            }
+
+                            Camera camera = new Camera(id, numar, tip, optiuni, esteOcupata);
+                            camere.Add(camera);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Eroare la procesarea liniei: {linie}. Detalii: {ex.Message}");
+                        }
                     }
                 }
+            }
+            catch (IOException ex)
+            {
+                throw new Exception($"Fișierul {caleFisier} este folosit de alt proces sau nu are permisiuni de acces: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Eroare la încărcarea camerelor din fișier: {ex.Message}", ex);
             }
         }
 
         public void StergeCamera(int numarCamera)
         {
-            throw new NotImplementedException();
+            Camera cameraDeSters = camere.Find(c => c.Numar == numarCamera);
+            if (cameraDeSters != null)
+            {
+                camere.Remove(cameraDeSters);
+                RescrieFisierCamere();
+            }
         }
 
-        public void AdaugaCamera()
+        public List<Camera> CautaCamere(string valoare)
         {
-            throw new NotImplementedException();
+            var camereGasite = new List<Camera>();
+
+            if (int.TryParse(valoare, out int numarCamera))
+            {
+                var camera = CautaCameraDupaNumar(numarCamera);
+                if (camera != null)
+                    camereGasite.Add(camera);
+            }
+
+            if (Enum.TryParse(valoare, true, out TipCamera tip))
+            {
+                var camere = AfisareCamere();
+                var camereTip = camere.Where(c => c.Tip == tip).ToList();
+                foreach (var camera in camereTip)
+                {
+                    if (!camereGasite.Contains(camera))
+                        camereGasite.Add(camera);
+                }
+            }
+
+            return camereGasite;
         }
     }
 }

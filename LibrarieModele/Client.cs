@@ -1,4 +1,6 @@
-﻿namespace NivelModele
+﻿using System;
+
+namespace NivelModele
 {
     public class Client
     {
@@ -29,6 +31,20 @@
                 return "CLIENT NESETAT";
             else
                 return $"Client: {Nume} {Prenume}, Telefon: {Telefon}, Email: {Email}";
+        }
+
+        public static Client FromString(string v)
+        {
+            var parts = v.Split(',');
+            if (parts.Length < 4)
+                throw new ArgumentException("Linie invalidă pentru client: " + v);
+
+            return new Client(parts[0], parts[1], parts[2], parts[3]);
+        }
+
+        public override string ToString()
+        {
+            return $"{Nume},{Prenume},{Telefon},{Email}";
         }
     }
 }
